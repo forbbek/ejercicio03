@@ -16,7 +16,7 @@ pipeline
     
     stages
     {
-        stage('Ejercicio01') {
+        stage('Ejercicio03') {
             steps {
                 script {
                     numero1 = 3000
