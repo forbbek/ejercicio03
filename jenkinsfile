@@ -55,7 +55,7 @@ pipeline
         stage('Escribir fichero') {
             steps {
                 script {
-                    nombre_fichero = "calculos"
+                    nombre_fichero = "calculos.txt"
                     writeFile(file: nombre_fichero, text: archivo)
                 }
              }
