@@ -1,0 +1,90 @@
+def archivo
+
+pipeline
+{
+    agent any
+    
+    options
+    {
+        timeout(time:5, unit: 'MINUTES')
+    }
+    
+    environment
+    {
+        RUTA_ABSOLUTA = "C:\\"
+    }
+    
+    stages
+    {
+        stage('Ejercicio01') {
+            steps {
+                script {
+                    numero1 = 3000
+                    numero2 = 1000
+                    numero3 = 3
+                    suma = numero1 + numero2
+                    resta = numero1 - numero2
+                    multiplicacion = numero1 * numero3
+                    division = numero1 / numero3
+                    println "numero1: " + numero1
+                    archivo = "numero1: " + numero1
+                    println "numero2: " + numero2
+                    archivo = archivo + "numero2: " + numero2
+                    println "numero3: " + numero3
+                    archivo = archivo + "numero3: " + numero3
+                    println "Suma: " + suma
+                    println "Resta:" + resta
+                    println "Multiplicacion: " + multiplicacion
+                    println "Division: " + division
+                    archivo = archivo + "Suma: " + suma
+                    archivo = archivo + "Resta:" + resta
+                    archivo = archivo + "Multiplicacion: " + multiplicacion
+                    archivo = archivo + "Division: " + division
+                }
+            }
+        }
+
+        stage("Ejecutar comando de CMD")
+        {
+            steps
+            {
+                bat "ipconfig /flushdns"
+            }
+        }
+        
+        stage('Escribir fichero') {
+            steps {
+                script {
+                    nombre_fichero = "calculos.txt"
+                    writeFile(file: nombre_fichero, text: archivo)
+                }
+             }
+        }
+
+    }
+    post
+    {
+        always
+        {
+            echo "El pipeline se ejecuto. "
+        }
+        failure
+        {
+            echo 'EL pipeline fallo'
+            script
+            {
+            def errorMessage = currentBuild.rawBuild.getLog(1000).join('\n')
+            echo 'Detalles del error: ${errorMessage}'
+            mail to: "soporte@dominio.com", subject: "Pipeline Fallo", body: "El pipeline no se ejecuto."
+            }
+        }
+        unstable
+        {
+            echo "El pipeline no se ejecuto de forma estable."
+        }
+        success
+        {
+            echo "Mensaje a ejecutar si salio todo bien"        
+        }
+    }
+}
